@@ -20,8 +20,7 @@ test('Add multiple todos', async ({ page }) => {
     await todoListPage.todoShouldExist('Hello', 'World', 'Love', 'Playwright');
 });
 
-
- test('Edit todo', async () => {
+test('Edit todo', async () => {
     await todoListPage.addToDo('Edit me');
     await todoListPage.editToDo('Edit me', 'Hello World');
     await todoListPage.todoShouldExist('Hello World');
@@ -57,14 +56,12 @@ test('Remove all completed todos', async () => {
 test('Move todo to tomorrow', async () => {
     await todoListPage.addToDo('Hello');
     await todoListPage.moveToTomorrow('Hello');
-    //await todoListPage.tomorrowTodoShouldNotExist('Hello');
 });
-
 
 test('Sort todos alphabetically', async () => {
     await todoListPage.addToDos('Banana', 'Apple', 'Cherry');
     await todoListPage.sortAlphabetically();
-   await todoListPage.todoShouldExist('Apple', 'Banana', 'Cherry');
+    await todoListPage.todoShouldExist('Apple', 'Banana', 'Cherry');
 });
 
 test('Sort todos normal', async () => {
@@ -100,7 +97,7 @@ test('Delete category', async () => {
     await todoListPage.createNewCategory('Temp Category');
     await todoListPage.deleteCategory('Temp Category');
     await todoListPage.categoryShouldNotExist('Temp Category');
-});    
+});
 
 
 

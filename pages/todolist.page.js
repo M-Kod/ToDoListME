@@ -4,11 +4,13 @@ export class TodoListPage {
         this.page = page;
         this.newToDoInput = page.locator('#newtodo');
         this.todoList = page.locator('#mytodos li');
-        this.updateBox = page.locator('#inplaceeditor #updatebox');
+         this.updateBox = page.locator('#updatebox');
+        this.inplaceUpdateBox = page.locator('#inplaceeditor #updatebox');
         this.editInput = page.locator('#mytodos li input[type="text"]');
         this.removeAllCompletedTodo = page.locator('.purge');
-
-
+        this.saveButton = page.locator('input[value="Save"]');
+        this.lists = page.locator('#lists li[data-listid]');
+        this.categories = page.locator('#mycategories li');
     }
 
     async open() {
@@ -26,7 +28,6 @@ export class TodoListPage {
         }
     }
 
-
     async todoShouldExist(text) {
         await expect(this.page.getByText(text, { exact: true })).toBeVisible();
     }
@@ -34,8 +35,6 @@ export class TodoListPage {
     async todoShouldNotExist(text) {
         await expect(this.page.getByText(text, { exact: true })).toHaveCount(0);
     }
-
-
 
     async editToDo(oldText, newText) {
         const todoTask = this.todoList.filter({ hasText: oldText });
@@ -65,15 +64,11 @@ export class TodoListPage {
     }
 
     async moveToTomorrow(text) {
-        const item = this.todoList.filter({ hasText: text });
+        const toDoItem = this.todoList.filter({ hasText: text });
         const tomorrow = this.page.locator('#tomorrowtitle');
-        await item.dragTo(tomorrow);
+        await toDoItem.dragTo(tomorrow);
         const showTomorrow = this.page.locator('#tomorrowarrow');
         await showTomorrow.click();
-    }
-
-    async tomorrowTodoShouldNotExist(text) {
-    await expect(this.todoList.filter({ hasText: text })).toHaveCount(0);
     }
 
     async sortAlphabetically() {
@@ -92,64 +87,58 @@ export class TodoListPage {
 
     async createNewList(name) {
         await this.page.locator('#addlist').click();
-        await this.page.locator('#updatebox').fill(name);
-        await this.page.locator("//input[@value='Save']").press('Enter');
-
-    }
-
-    async listShouldExist(name) {
-        await expect(this.page.locator('#lists li[data-listid]').filter({ hasText: name })).toBeVisible();
+        await this.updateBox.fill(name);
+        await this.updateBox.press('Enter');
     }
 
     async renameList(oldName, newName) {
-        const list = this.page.locator('#lists li[data-listid]').filter({ hasText: oldName });
+        const list = this.lists.filter({ hasText: oldName });
         await list.locator('span.listname').dblclick();
-        await this.updateBox.waitFor({ state: 'visible' });
-        await this.updateBox.fill(newName);
-        await this.page.locator('input[value="Save"]').click();
+        await this.inplaceUpdateBox.waitFor({ state: 'visible' });
+        await this.inplaceUpdateBox.fill(newName);
+        await this.saveButton.click();
     }
 
-
-    async listShouldNotExist(name) {
-        await expect(this.page.locator('#lists li').filter({ hasText: name })).toHaveCount(0);
-    }
-
-    async deleteList(name) {
-        const list = this.page.locator('#lists li[data-listid]').filter({ hasText: name });
+     async deleteList(name) {
+        const list = this.lists.filter({ hasText: name });
         await list.hover();
         await list.locator('.delete').click();
     }
 
+     async listShouldExist(name) {
+        await expect(this.lists.filter({ hasText: name })).toBeVisible();
+    }
+
+    async listShouldNotExist(name) {
+        await expect(this.lists.filter({ hasText: name })).toHaveCount(0);
+    }
+
     async createNewCategory(name) {
         await this.page.locator('#adddivider').click();
-        await this.page.locator('#updatebox').waitFor({ state: 'visible' });
-        await this.page.locator('#updatebox').fill(name);
-        await this.page.locator('input[value="Save"]').click();
+        await this.updateBox.waitFor({ state: 'visible' });
+        await this.updateBox.fill(name);
+        await this.saveButton.click();
     }
 
     async renameCategory(oldName, newName) {
-        const category = this.page.locator('#mycategories li').filter({ hasText: oldName });
+        const category = this.categories.filter({ hasText: oldName });
         await category.locator('span.listname').dblclick();
-        await this.page.locator('#inplaceeditor #updatebox').waitFor({ state: 'visible' });
-        await this.page.locator('#inplaceeditor #updatebox').fill(newName);
-        await this.page.locator('input[value="Save"]').click();
+        await this.inplaceUpdateBox.waitFor({ state: 'visible' });
+        await this.inplaceUpdateBox.fill(newName);
+        await this.saveButton.click();
     }
 
     async deleteCategory(name) {
-        const category = this.page.locator('#mycategories li').filter({ hasText: name });
+        const category = this.categories.filter({ hasText: name });
         await category.hover();
         await category.locator('img.delete').click();
     }
 
     async categoryShouldExist(name) {
-        await expect(this.page.locator('#mycategories li').filter({ hasText: name })).toBeVisible();
+        await expect(this.categories.filter({ hasText: name })).toBeVisible();
     }
 
     async categoryShouldNotExist(name) {
-        await expect(this.page.locator('#mycategories li').filter({ hasText: name })).toHaveCount(0);
+        await expect(this.categories.filter({ hasText: name })).toHaveCount(0);
     }
-
-
-
-
 }
